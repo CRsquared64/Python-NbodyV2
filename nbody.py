@@ -1,4 +1,5 @@
 import numpy as np
+import pynndescent
 
 WIDTH, HEIGHT = 1920, 1080
 
@@ -9,13 +10,15 @@ https://github.com/CRsquared64/3D-Nbody/blob/main/nbody.py
 
 
 '''
+
+
 class Nbody:
-    G = 6.67428e-11  # can also be 1, makes some difference
+    G = 1 * 6.67428e-11  # can also be 1, makes some difference
     AU = 149.6e6 * 1000
     distance_to_moon = 3.84399 * 10 ** 8
     PLUTO_TO_CHARON = 19640 * 1000
-    TIMESTEP = 3600 * 1  # seconds
-    SCALE = 500 / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
+    TIMESTEP = 3600 * 24 * 365 * 4000000  # seconds
+    SCALE = 1.5e-20  # / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
 
     # 106983694 = y
 
@@ -30,7 +33,7 @@ class Nbody:
 
         self.use_approximate_nn = use_approximate_nn
 
-        #self.trail = []
+        # self.trail = []
 
         self.xv = 0
         self.yv = 0
@@ -54,7 +57,9 @@ class Nbody:
 
     def position(self, bodies, nn):
         if self.use_approximate_nn:
-            neighbors = nn.query((self.x, self.y, self.z), k=2)
+            # query_point = np.array([self.x, self.y, self.z], dtype=np.float32)
+            # neighbors = nn.query(query_point, k=2)
+            pass
         else:
             neighbors = bodies
 
@@ -80,7 +85,7 @@ class Nbody:
         self.y += self.yv * self.TIMESTEP
         self.z += self.zv * self.TIMESTEP
 
-        #self.trail.append((self.x, self.y, self.z))
+        # self.trail.append((self.x, self.y, self.z))
 
     def get_draw_pos(self):
         x = self.x * self.SCALE

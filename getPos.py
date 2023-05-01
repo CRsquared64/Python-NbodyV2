@@ -1,13 +1,14 @@
 import pickle
-
+import numpy as np
 from tqdm import tqdm
-
+from pynndescent import NNDescent
 
 def get_pos(bodies, cycles):
     nn = False
-
+    data = np.array([[body.x, body.y, body.z] for body in bodies])
     poses = [[] for i in range(cycles)]
     amount = len(bodies) * cycles
+    #nn = NNDescent(data)
     print("Calculating Positions")
     with tqdm(total=amount) as pb:
         for i in range(cycles):

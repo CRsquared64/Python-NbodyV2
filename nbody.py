@@ -14,8 +14,8 @@ class Nbody:
     AU = 149.6e6 * 1000
     distance_to_moon = 3.84399 * 10 ** 8
     PLUTO_TO_CHARON = 19640 * 1000
-    TIMESTEP = 3600 * 24  # seconds
-    SCALE = 75 / AU  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
+    TIMESTEP = 3600 * 1  # seconds
+    SCALE = 500 / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
 
     # 106983694 = y
 
@@ -30,7 +30,7 @@ class Nbody:
 
         self.use_approximate_nn = use_approximate_nn
 
-        self.trail = []
+        #self.trail = []
 
         self.xv = 0
         self.yv = 0
@@ -80,10 +80,10 @@ class Nbody:
         self.y += self.yv * self.TIMESTEP
         self.z += self.zv * self.TIMESTEP
 
-        self.trail.append((self.x, self.y, self.z))
+        #self.trail.append((self.x, self.y, self.z))
 
     def get_draw_pos(self):
-        x = self.x
-        y = self.y
-        z = self.z
+        x = self.x * self.SCALE
+        y = self.y * self.SCALE
+        z = self.z * self.SCALE
         return x, y, z

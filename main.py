@@ -8,6 +8,7 @@ import sim.solarSystem
 #import sim.spiralSystem
 
 import renderMatplot
+import renderPygame
 
 import sim.earthMoonSystem
 # import sim.plutoCharonSystem
@@ -21,7 +22,7 @@ except OSError as error:
 
 
 
-CYCLES = 24
+CYCLES = 1024
 BODIES = sim.earthMoonSystem.bodies
 body_count = len(BODIES)
 VID_ID = sim.solarSystem.video_name
@@ -38,5 +39,8 @@ if __name__ == '__main__':
         #poses = fileHandler.file_load(file)
         #print(f"Loaded positions from {file}")
         pass
-    renderMatplot.render(poses, 0)
+    #renderMatplot.render(poses, 0)
+    #renderMatplot.img2vid(60, "Moon", CYCLES)
+    renderPygame.pygame_setup()
+    renderPygame.render(poses, 0)
 

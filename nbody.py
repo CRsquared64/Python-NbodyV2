@@ -50,11 +50,11 @@ class Nbody:
         self.xv = 0
         self.yv = 0
         self.zv = 0
-        self.G = 1 * 6.67428e-11  # can also be 1, makes some difference
+        self.G = 1 * 0.6 #* 6.67428e-11  # can also be 1, makes some difference
         self.AU = 149.6e6 * 1000
         self.distance_to_moon = 3.84399 * 10 ** 8
         self.PLUTO_TO_CHARON = 19640 * 1000
-        self.TIMESTEP = 3600 * 24 * 365 * 1000000  # seconds
+        self.TIMESTEP = 3600 * 24 * 365 * 100000  # seconds
         self.SCALE = 1.5e-20  # / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
 
     def __eq__(self, other):

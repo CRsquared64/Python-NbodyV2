@@ -8,12 +8,12 @@ from pylab import *
 global bodies, video_name
 
 from nbody import Nbody
+from numba import njit
 
 video_name = "SpiralSystem"
 bodies = []
 n = 1000
 separation = 1
-
 
 def coord(n):
     # math credit to https://stackoverflow.com/questions/38562144/simulating-a-logarithmic-spiral-galaxy-in-python
@@ -45,13 +45,22 @@ B_HOLE = Nbody(0, 0, 0, 69, 8.26 * 10 ** 28, (0, 0, 255), "Black hole")
 bodies.append(B_HOLE)
 x, y, x1, y1 = coord(n)
 k = (n / 2)
+G = 6.67430e-11  # gravitational constant
+
 for i in range(n):
     import random
     if i < k:
         STAR = Nbody(x[i] * 10 ** 22, y[i] * 10 ** 22, 0, 6.95700 * 10 ** 8, np.random.uniform(1e20, 1e22), (255, 255, 255),
                            "star", False)
-        STAR.yv = random.gauss(225e4, 50e3)
-        STAR.xv = random.gauss(-225e4, 50e3)
+        # calculate distance between star and black hole
+        r = ((STAR.x - B_HOLE.x) ** 2 + (STAR.y - B_HOLE.y) ** 2) ** 0.5
+        # calculate gravitational force between star and black hole
+        F = G * STAR.mass * B_HOLE.mass / r ** 2
+        # calculate tangential velocity
+        v_tan = (F * r / STAR.mass) ** 0.5
+        # set initial velocities
+        STAR.yv = v_tan * cos(atan2(STAR.y - B_HOLE.y, STAR.x - B_HOLE.x))
+        STAR.xv = -v_tan * sin(atan2(STAR.y - B_HOLE.y, STAR.x - B_HOLE.x))
         bodies.append(STAR)
     else:
         STAR = Nbody(x1[i] * 10 ** 22 + separation,
@@ -64,10 +73,15 @@ for i in range(n):
                             255),
                            "star",
                            False)
-        STAR.yv = random.gauss(-225e4,
-                               50e3)
-        STAR.xv = random.gauss(225e4,
-                               50e3)
+        # calculate distance between star and black hole
+        r = ((STAR.x - B_HOLE.x) ** 2 + (STAR.y - B_HOLE.y) ** 2) ** 0.5
+        # calculate gravitational force between star and black hole
+        F = G * STAR.mass * B_HOLE.mass / r ** 2
+        # calculate tangential velocity
+        v_tan = (F * r / STAR.mass) ** 0.5
+        # set initial velocities
+        STAR.yv = v_tan * cos(atan2(STAR.y - B_HOLE.y, STAR.x - B_HOLE.x))
+        STAR.xv = -v_tan * sin(atan2(STAR.y - B_HOLE.y, STAR.x - B_HOLE.x))
         bodies.append(STAR)
 
 print(len(bodies))

@@ -2,11 +2,12 @@ import numpy as np
 import pynndescent
 import numba
 from typing import List
-from numba import jit, float64, int64
+from numba import jit, float64, int64, cuda
 from numba.experimental import jitclass
 import nbody
 from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
 import warnings
+import heapq
 
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
@@ -32,6 +33,7 @@ spec = [
     ('SCALE', float64)
 ]
 
+
 @jitclass(spec)
 class Nbody:
 
@@ -50,11 +52,11 @@ class Nbody:
         self.xv = 0
         self.yv = 0
         self.zv = 0
-        self.G = 1 * 0.6 #* 6.67428e-11  # can also be 1, makes some difference
+        self.G = 1 * 0.6  # * 6.67428e-11  # can also be 1, makes some difference
         self.AU = 149.6e6 * 1000
         self.distance_to_moon = 3.84399 * 10 ** 8
         self.PLUTO_TO_CHARON = 19640 * 1000
-        self.TIMESTEP = 3600 * 24 * 365 * 100000  # seconds
+        self.TIMESTEP = 3600 * 24 * 365 * 100000000  # seconds
         self.SCALE = 1.5e-20  # / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
 
     def __eq__(self, other):
@@ -68,8 +70,16 @@ class Nbody:
             self.PLUTO_TO_CHARON == other.PLUTO_TO_CHARON and \
             self.TIMESTEP == other.TIMESTEP and self.SCALE == other.SCALE
 
-    #@numba.jit(nopython=True)
-    def force(self, obj : List[type]):
+    #@cuda.jit(nopython=True)
+
+    def neighbors(self, bodies: numba.types.List, k: numba.types.int64):
+        distances = [((self.x - body.x) ** 2 + (self.y - body.y) ** 2 + (self.z - body.z) ** 2) ** 0.5 for body in
+                     bodies if body != self]
+        indices = np.argsort(np.array(distances))[:k]
+        return [bodies[i] for i in indices]
+
+    # @numba.jit(nopython=True)
+    def force(self, obj: List[type]):
         obj_x = obj.x
         obj_y = obj.y
         obj_z = obj.z
@@ -85,14 +95,18 @@ class Nbody:
 
         return force_x, force_y, force_z
 
-    #@numba.jit(nopython=True)
-    def position(self, bodies : numba.types.List):
+    # @numba.jit(nopython=True)
+    def position(self, bodies: numba.types.List, k: numba.types.int64):
 
+        if k != 0:
+            neighbors = self.neighbors(bodies, k)
+        else:
+            neighbors = bodies
         total_force_x = 0
         total_force_y = 0
         total_force_z = 0
 
-        for body in bodies:
+        for body in neighbors:
             if self == body:
                 continue
 

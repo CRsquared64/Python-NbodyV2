@@ -25,7 +25,7 @@ except OSError as error:
 
 
 
-CYCLES = 1024
+CYCLES = 100
 BODIES = sim.spiralSystem.bodies
 body_count = len(BODIES)
 VID_ID = sim.spiralSystem.video_name

@@ -37,7 +37,7 @@ def render(poses, dist):
                 x1 = int(x[n])
                 y1 = int(y[n])
                 z1 = int(z[n])
-                radius1 = int(radius[n]) * nbody.Nbody.SCALE
+                radius1 = int(radius[n]) * 1 # depracated, all radius is 1
                 # print(x1, y1, z1, radius1)
 
                 if z1 == 0:
@@ -70,12 +70,14 @@ def img2vid(FPS, vid_id, cycles):
 
     video_name = f"{vid_id}_{cycles}_{nbody.Nbody.TIMESTEP}.mp4"
     fourcc = cv.VideoWriter_fourcc(*'mp4v')
-    video = cv.VideoWriter(video_name, fourcc, FPS, (960, 720))
+    video = cv.VideoWriter(video_name, fourcc, FPS, (1920, 1080))
 
     print("Creating Video From Frames")
     with tqdm(total=img_amount) as pb:
         for img in images:
             video.write(img)
             pb.update(1)
+
+
     cv.destroyAllWindows()
     video.release()

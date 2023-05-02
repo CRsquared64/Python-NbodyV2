@@ -4,15 +4,15 @@ import sys
 import numpy as np
 
 import getPos
-import sim.solarSystem
+#import sim.solarSystem
 import sim.spiralSystem
-import sim.galaxyCollison
-import sim.GalaxyCollison2
-import renderMatplot
+#import sim.galaxyCollison
+#import sim.GalaxyCollison2
+#import renderMatplot
 import renderPygame
 
-import sim.earthMoonSystem
-import sim.randomBodies
+#import sim.earthMoonSystem
+#import sim.randomBodies
 # import sim.plutoCharonSystem
 import fileHandler
 
@@ -25,10 +25,10 @@ except OSError as error:
 
 
 
-CYCLES = 100
+CYCLES = 20
 BODIES = sim.spiralSystem.bodies
 body_count = len(BODIES)
-VID_ID = sim.solarSystem.video_name
+VID_ID = sim.spiralSystem.video_name
 
 load = False
 file = str(sys.argv[1])
@@ -37,6 +37,8 @@ if __name__ == '__main__':
     if not load:
         print(f"Generating {body_count} bodies, for {CYCLES} cycles.")
         poses = np.array(getPos.get_pos(BODIES, CYCLES))
+        with open('nbodies.pos', 'wb') as handle:
+            handle.write(poses)
         print("Generation Finished")
     else:
         poses = np.array(fileHandler.file_load(file))

@@ -1,28 +1,42 @@
 import numpy as np
 import pynndescent
+import numba
+from typing import List
+from numba import jit, float64, int64
+from numba.experimental import jitclass
+import nbody
+from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+import warnings
+
+warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
 WIDTH, HEIGHT = 1920, 1080
+spec = [
+    ('x', float64),
+    ('y', float64),
+    ('z', float64),
+    ('identify', numba.types.unicode_type),
+    ('radius', float64),
+    ('mass', float64),
+    ('colour', numba.types.UniTuple(numba.types.int64, 3)),
+    ('use_approximate_nn', numba.types.boolean),
+    ('xv', float64),
+    ('yv', float64),
+    ('zv', float64),
+    ('G', float64),
+    ('AU', float64),
+    ('distance_to_moon', float64),
+    ('PLUTO_TO_CHARON', float64),
+    ('TIMESTEP', float64),
+    ('SCALE', float64)
+]
 
-'''
-
-This Class is taken from my previous Nbody Simulation in python and can be found here:
-https://github.com/CRsquared64/3D-Nbody/blob/main/nbody.py
-
-
-'''
-
-
+@jitclass(spec)
 class Nbody:
-    G = 1 * 6.67428e-11  # can also be 1, makes some difference
-    AU = 149.6e6 * 1000
-    distance_to_moon = 3.84399 * 10 ** 8
-    PLUTO_TO_CHARON = 19640 * 1000
-    TIMESTEP = 3600 * 24 * 365 * 4000000  # seconds
-    SCALE = 1.5e-20  # / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
-
-    # 106983694 = y
 
     def __init__(self, x, y, z, radius, mass, colour, identify, use_approximate_nn=False):
+        global SCALE
         self.x = x
         self.y = y
         self.z = z
@@ -33,13 +47,29 @@ class Nbody:
 
         self.use_approximate_nn = use_approximate_nn
 
-        # self.trail = []
-
         self.xv = 0
         self.yv = 0
         self.zv = 0
+        self.G = 1 * 6.67428e-11  # can also be 1, makes some difference
+        self.AU = 149.6e6 * 1000
+        self.distance_to_moon = 3.84399 * 10 ** 8
+        self.PLUTO_TO_CHARON = 19640 * 1000
+        self.TIMESTEP = 3600 * 24 * 365 * 1000000  # seconds
+        self.SCALE = 1.5e-20  # / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
 
-    def force(self, obj):
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and self.z == other.z and \
+            self.identify == other.identify and self.radius == other.radius and \
+            self.mass == other.mass and self.colour == other.colour and \
+            self.use_approximate_nn == other.use_approximate_nn and \
+            self.xv == other.xv and self.yv == other.yv and self.zv == other.zv and \
+            self.G == other.G and self.AU == other.AU and \
+            self.distance_to_moon == other.distance_to_moon and \
+            self.PLUTO_TO_CHARON == other.PLUTO_TO_CHARON and \
+            self.TIMESTEP == other.TIMESTEP and self.SCALE == other.SCALE
+
+    #@numba.jit(nopython=True)
+    def force(self, obj : List[type]):
         obj_x = obj.x
         obj_y = obj.y
         obj_z = obj.z
@@ -55,19 +85,14 @@ class Nbody:
 
         return force_x, force_y, force_z
 
-    def position(self, bodies, nn):
-        if self.use_approximate_nn:
-            # query_point = np.array([self.x, self.y, self.z], dtype=np.float32)
-            # neighbors = nn.query(query_point, k=2)
-            pass
-        else:
-            neighbors = bodies
+    #@numba.jit(nopython=True)
+    def position(self, bodies : numba.types.List):
 
         total_force_x = 0
         total_force_y = 0
         total_force_z = 0
 
-        for body in neighbors:
+        for body in bodies:
             if self == body:
                 continue
 
@@ -84,8 +109,6 @@ class Nbody:
         self.x += self.xv * self.TIMESTEP
         self.y += self.yv * self.TIMESTEP
         self.z += self.zv * self.TIMESTEP
-
-        # self.trail.append((self.x, self.y, self.z))
 
     def get_draw_pos(self):
         x = self.x * self.SCALE

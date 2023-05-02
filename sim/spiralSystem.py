@@ -3,13 +3,15 @@ from math import *
 import numpy as np
 from pylab import *
 
-import nbody
+
 
 global bodies, video_name
 
+from nbody import Nbody
+
 video_name = "SpiralSystem"
 bodies = []
-n = 400
+n = 4000
 separation = 1
 
 
@@ -39,20 +41,20 @@ def coord(n):
     return x, y, x1, y1
 
 
-B_HOLE = nbody.Nbody(0, 0, 0, 1.2 * 10 ** 7, 8.26 * 10 ** 36, (0, 0, 255), "Black hole")
+B_HOLE = Nbody(0, 0, 0, 1.2 * 10 ** 7, 8.26 * 10 ** 36, (0, 0, 255), "Black hole")
 bodies.append(B_HOLE)
 x, y, x1, y1 = coord(n)
 k = (n / 2)
 for i in range(n):
     import random
     if i < k:
-        STAR = nbody.Nbody(x[i] * 10 ** 22, y[i] * 10 ** 22, 0, 6.95700 * 10 ** 8, np.random.uniform(1e20, 1e22), (255, 255, 255),
+        STAR = Nbody(x[i] * 10 ** 22, y[i] * 10 ** 22, 0, 6.95700 * 10 ** 8, np.random.uniform(1e20, 1e22), (255, 255, 255),
                            "star", False)
         STAR.yv = random.gauss(225e3, 50e3)
         STAR.xv = random.gauss(-225e3, 50e3)
         bodies.append(STAR)
     else:
-        STAR = nbody.Nbody(x1[i] * 10 ** 22 + separation,
+        STAR = Nbody(x1[i] * 10 ** 22 + separation,
                            y1[i] * 10 ** 22, 0,
                            6.95700 * 10 ** 8,
                            random.uniform(1e20,

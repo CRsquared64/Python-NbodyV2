@@ -13,7 +13,7 @@ def get_pos(bodies, cycles):
     with tqdm(total=amount) as pb:
         for i in range(cycles):
             for n, body in enumerate(bodies):
-                body.position(bodies, nn)
+                body.position(bodies)
                 poses[i].append((*body.get_draw_pos(), body.radius))
 
                 pb.update(1)

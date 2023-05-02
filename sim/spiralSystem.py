@@ -11,7 +11,7 @@ from nbody import Nbody
 
 video_name = "SpiralSystem"
 bodies = []
-n = 4000
+n = 1000
 separation = 1
 
 
@@ -41,7 +41,7 @@ def coord(n):
     return x, y, x1, y1
 
 
-B_HOLE = Nbody(0, 0, 0, 1.2 * 10 ** 7, 8.26 * 10 ** 36, (0, 0, 255), "Black hole")
+B_HOLE = Nbody(0, 0, 0, 69, 8.26 * 10 ** 28, (0, 0, 255), "Black hole")
 bodies.append(B_HOLE)
 x, y, x1, y1 = coord(n)
 k = (n / 2)
@@ -50,8 +50,8 @@ for i in range(n):
     if i < k:
         STAR = Nbody(x[i] * 10 ** 22, y[i] * 10 ** 22, 0, 6.95700 * 10 ** 8, np.random.uniform(1e20, 1e22), (255, 255, 255),
                            "star", False)
-        STAR.yv = random.gauss(225e3, 50e3)
-        STAR.xv = random.gauss(-225e3, 50e3)
+        STAR.yv = random.gauss(225e4, 50e3)
+        STAR.xv = random.gauss(-225e4, 50e3)
         bodies.append(STAR)
     else:
         STAR = Nbody(x1[i] * 10 ** 22 + separation,
@@ -64,9 +64,9 @@ for i in range(n):
                             255),
                            "star",
                            False)
-        STAR.yv = random.gauss(-225e3,
+        STAR.yv = random.gauss(-225e4,
                                50e3)
-        STAR.xv = random.gauss(225e3,
+        STAR.xv = random.gauss(225e4,
                                50e3)
         bodies.append(STAR)
 

@@ -25,7 +25,7 @@ except OSError as error:
 
 
 
-CYCLES = 20
+CYCLES = 1024
 BODIES = sim.spiralSystem.bodies
 body_count = len(BODIES)
 VID_ID = sim.spiralSystem.video_name
@@ -37,8 +37,6 @@ if __name__ == '__main__':
     if not load:
         print(f"Generating {body_count} bodies, for {CYCLES} cycles.")
         poses = np.array(getPos.get_pos(BODIES, CYCLES))
-        with open('nbodies.pos', 'wb') as handle:
-            handle.write(poses)
         print("Generation Finished")
     else:
         poses = np.array(fileHandler.file_load(file))

@@ -74,8 +74,8 @@ class Nbody:
 
     def neighbors(self, bodies: numba.types.List, k: numba.types.int64):
         distances = [((self.x - body.x) ** 2 + (self.y - body.y) ** 2 + (self.z - body.z) ** 2) ** 0.5 for body in
-                     bodies if body != self]
-        indices = np.argsort(np.array(distances))[:k]
+                     bodies]
+        indices = np.argsort(np.array(distances))[1:k+1]  # First item would be self as you are closest to your self, we can ignore self.
         return [bodies[i] for i in indices]
 
     # @numba.jit(nopython=True)

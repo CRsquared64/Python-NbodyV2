@@ -45,9 +45,11 @@ def render(poses, dist):
 
                 rendered_x = int(x1 + (x1 / z1))
                 rendered_y = int(y1 + (y1 / z1))
-                dynamic_radius = 1  # int(radius1 / z1)
-                if dynamic_radius == 0:
+                if radius1==69:
+                    dynamic_radius = 5
+                else:
                     dynamic_radius = 1
+
                 #print(f"Render X: {rendered_x}, Rendered Y: {rendered_y}, Rendered Radius: {dynamic_radius}")
                 try:
                     pygame.draw.circle(win, (255, 255, 255), (int(center_x - rendered_x), int(center_y - rendered_y)),
@@ -68,7 +70,7 @@ def img2vid(FPS, vid_id, cycles):
     images = [cv.imread(img) for img in filenames]
     img_amount = len(images)
 
-    video_name = f"{vid_id}_{cycles}_{nbody.Nbody.TIMESTEP}.mp4"
+    video_name = f"{vid_id}_{cycles}_nbody.mp4"
     fourcc = cv.VideoWriter_fourcc(*'mp4v')
     video = cv.VideoWriter(video_name, fourcc, FPS, (1920, 1080))
 

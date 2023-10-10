@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy
 import numpy as np
 import random
 import cv2 as cv
@@ -50,3 +51,11 @@ def img2vid(FPS, vid_id, cycles):
             pb.update(1)
 
 
+if __name__=="__main__":
+    data = numpy.loadtxt('c_positions/Nbodypositions_0.txt')
+    x = data[:, 0]
+    y = data[:, 1]
+    z = data[:, 2]
+    axis_setup()
+    ax.scatter3D(x, y, z, s=1, cmap="Blues", c=x, depthshade=False)
+    plt.show()

@@ -5,8 +5,8 @@ import numpy as np
 
 import getPos
 #import sim.solarSystem
-import sim.spiralSystem
-#import sim.galaxyCollison
+#import sim.spiralSystem
+import sim.galaxyCollison
 #import sim.GalaxyCollison2
 #import renderMatplot
 import renderPygame
@@ -26,9 +26,9 @@ except OSError as error:
 
 
 CYCLES = 100
-BODIES = sim.spiralSystem.bodies
+BODIES = sim.galaxyCollison.bodies
 body_count = len(BODIES)
-VID_ID = sim.spiralSystem.video_name
+VID_ID = sim.galaxyCollison.video_name
 
 load = False
 file = str(sys.argv[1])
@@ -45,6 +45,6 @@ if __name__ == '__main__':
     #renderMatplot.render(poses, 0)
     #renderMatplot.img2vid(60, "Moon", CYCLES)
     renderPygame.pygame_setup()
-    renderPygame.render(poses, 0)
+    renderPygame.render(poses)
     renderPygame.img2vid(60, "Moon", CYCLES)
 

@@ -56,7 +56,7 @@ class Nbody:
         self.AU = 149.6e6 * 1000
         self.distance_to_moon = 3.84399 * 10 ** 8
         self.PLUTO_TO_CHARON = 19640 * 1000
-        self.TIMESTEP = 3600 * 24 * 365 * 100000000  # seconds
+        self.TIMESTEP = 3600 * 24 * 365 * 10000000  # seconds
         self.SCALE = 1.5e-20  # / distance_to_moon  # 75 / AU or 500 / distance-tomoon or 75 * 10 ** -20
 
     def __eq__(self, other):
@@ -86,8 +86,10 @@ class Nbody:
         obj_dist = np.array([obj_x, obj_y, obj_z]) - np.array([self.x, self.y, self.z])
         dist = np.linalg.norm(obj_dist)
 
+
         force = self.G * self.mass * obj.mass / dist ** 2
         force_vector = force * obj_dist / dist
+
 
         force_x = force_vector[0]
         force_y = force_vector[1]
@@ -116,10 +118,11 @@ class Nbody:
             total_force_z += force_z
 
         # Update the velocity and position of this body based on the total force
+
         self.xv += total_force_x / self.mass * self.TIMESTEP
         self.yv += total_force_y / self.mass * self.TIMESTEP
         self.zv += total_force_z / self.mass * self.TIMESTEP
-
+        #print(self.xv)
         self.x += self.xv * self.TIMESTEP
         self.y += self.yv * self.TIMESTEP
         self.z += self.zv * self.TIMESTEP
